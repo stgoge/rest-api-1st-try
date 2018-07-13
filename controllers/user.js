@@ -1,9 +1,17 @@
 const JWT = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const NameExistsError = {
   CODE: 403,
   TEXT: 'Username is already exists',
+};
+
+const getUserWithHashedPass = (user) => {
+  const hashed = user;
+  const salt = bcrypt.genSaltSync();
+  hashed.password = bcrypt.hashSync(user.password, salt);
+  return hashed;
 };
 
 const signToken = user => JWT.sign({
@@ -21,7 +29,7 @@ module.exports = {
           res.status(NameExistsError.CODE).json({ error: NameExistsError.TEXT });
         } else {
           const newUser = new User({ username, password, admin: false });
-          newUser.save()
+          getUserWithHashedPass(newUser).save()
             .then(() => res.json({ token: signToken(newUser) }))
             .catch(error => res.status(process.env.INTERNAL_ERROR_CODE).json(error));
         }
