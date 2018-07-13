@@ -1,30 +1,28 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 
-
 const signToken = user => JWT.sign({
-  // iss: 'wtf',
-  // sub: newUser.id,
-  // iat: new Date().getTime(),
-  // exp: new Date().setDate(new Date().getDate() + 1),
   id: user.id,
   admin: user.admin,
+  exp: ((new Date().getTime() / 1000) + (process.env.JWT_EXPIRATION_HOURS * 60 * 60)),
 }, process.env.JWT_SECRET);
 
 module.exports = {
-  signUp: async (req, res, next) => {
+  signUp: (req, res) => {
     const { username, password } = req.value.body;
-
-    const FoundUser = await User.findOne({ username });
-    if (FoundUser) {
-      return res.status(403).json({ error: 'Username is already exists' });
-    }
-
-    const newUser = new User({ username, password, admin: false });
-    await newUser.save();
-    res.status(200).json({ token: signToken(newUser) });
+    User.findOne({ username })
+      .then((userName) => {
+        if (userName) {
+          res.status(403).json({ error: 'Username is already exists' });
+        } else {
+          const newUser = new User({ username, password, admin: false });
+          newUser.save()
+            .then(() => res.status(200).json({ token: signToken(newUser) }))
+            .catch(error => res.status(403).json(error));
+        }
+      });
   },
-  signIn: async (req, res, next) => {
+  signIn: (req, res) => {
     const token = signToken(req.user);
     res.status(200).json({ token });
   },

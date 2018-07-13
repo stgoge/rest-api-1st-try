@@ -3,16 +3,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const RecordSchema = new Schema({
-  username: String,
+  userID: String,
   record: String,
-  priority: {
-    type: Number,
-    default: 0,
-  },
-  status: {
-    type: Number,
-    default: 0,
-  },
+  priority: Number,
+  status: Number,
 });
 
 const Record = mongoose.model('record', RecordSchema);

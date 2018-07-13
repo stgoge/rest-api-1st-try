@@ -18,5 +18,10 @@ module.exports = {
       username: Joi.string().required(),
       password: Joi.string().required(),
     }),
+    recordSchema: Joi.object().keys({
+      record: Joi.string().required(),
+      status: Joi.number().default(0),
+      priority: Joi.number().default(0),
+    }),
   },
 };
