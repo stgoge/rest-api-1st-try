@@ -1,17 +1,16 @@
 const Joi = require('joi');
 
+const VALIDATION_ERROR_CODE = 400;
+
 module.exports = {
-  validateUserData: schema => (req, res, next) => {
+  validateData: schema => (req, res, next) => {
     const result = Joi.validate(req.body, schema);
     if (result.error) {
-      return res.status(400).json(result.error);
+      res.status(VALIDATION_ERROR_CODE).json(result.error);
+      return;
     }
-    if (!req.value) {
-      req.value = {};
-    }
-    req.value.body = result.value;
+    req.body = result.value;
     next();
-    return '';
   },
   schemas: {
     authSchema: Joi.object().keys({

@@ -7,7 +7,6 @@ const router = require('./js/routes');
 
 const app = express();
 const port = process.env.PORT || 1337;
-const errorStatus = 422;
 
 mongoose.connect(`mongodb://${process.env.DB_PATH}`, { user: process.env.DB_USER, pass: process.env.DB_PASSWORD, dbName: process.env.DB_NAME });
 mongoose.Promise = global.Promise;
@@ -16,7 +15,7 @@ app.use(bodyParser.json());
 app.use(router);
 
 app.use((err, req, res) => {
-  res.status(errorStatus).send({ error: err.message });
+  res.status(process.env.INTERNAL_ERROR_CODE).send({ error: err.message });
 });
 
 app.listen(port, () => {

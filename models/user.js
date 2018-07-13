@@ -12,23 +12,14 @@ const userSchema = new Schema({
   admin: Boolean,
 });
 
-userSchema.pre('save', async function makeSalt(next) {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(this.password, salt);
-    this.password = passwordHash;
-    next();
-  } catch (error) {
-    next(error);
-  }
+userSchema.pre('save', async function makeSalt() {
+  const salt = bcrypt.genSaltSync();
+  const passwordHash = bcrypt.hashSync(this.password, salt);
+  this.password = passwordHash;
 });
 
-userSchema.methods.isValidPassword = async function validate(enteredPassword) {
-  try {
-    return await bcrypt.compare(enteredPassword, this.password);
-  } catch (error) {
-    throw new Error(error);
-  }
+userSchema.methods.isValidPassword = function justForLinterName(enteredPassword) {
+  return bcrypt.compareSync(enteredPassword, this.password);
 };
 
 const User = mongoose.model('user', userSchema);

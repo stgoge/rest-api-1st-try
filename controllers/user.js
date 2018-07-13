@@ -1,6 +1,11 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 
+const NameExistsError = {
+  CODE: 403,
+  TEXT: 'Username is already exists',
+};
+
 const signToken = user => JWT.sign({
   id: user.id,
   admin: user.admin,
@@ -9,21 +14,21 @@ const signToken = user => JWT.sign({
 
 module.exports = {
   signUp: (req, res) => {
-    const { username, password } = req.value.body;
+    const { username, password } = req.body;
     User.findOne({ username })
       .then((userName) => {
         if (userName) {
-          res.status(403).json({ error: 'Username is already exists' });
+          res.status(NameExistsError.CODE).json({ error: NameExistsError.TEXT });
         } else {
           const newUser = new User({ username, password, admin: false });
           newUser.save()
-            .then(() => res.status(200).json({ token: signToken(newUser) }))
-            .catch(error => res.status(403).json(error));
+            .then(() => res.json({ token: signToken(newUser) }))
+            .catch(error => res.status(process.env.INTERNAL_ERROR_CODE).json(error));
         }
       });
   },
   signIn: (req, res) => {
     const token = signToken(req.user);
-    res.status(200).json({ token });
+    res.json({ token });
   },
 };
