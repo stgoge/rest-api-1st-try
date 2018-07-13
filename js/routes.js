@@ -3,7 +3,7 @@ const passport = require('passport');
 const UsersController = require('../controllers/user');
 const RecordsController = require('../controllers/record');
 const { validateData, schemas } = require('./route-helpers');
-require('../passport');
+require('./passport');
 
 const passportLocal = passport.authenticate('local', { session: false });
 const passportJWT = passport.authenticate('jwt', { session: false });
