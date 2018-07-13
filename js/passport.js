@@ -12,8 +12,7 @@ passport.use(new JwtStrategy(
   },
   (payload, done) => {
     User.findById(payload.id)
-      .then(user => done(null, user))
-      .catch(error => done(error, false));
+      .then(user => done(null, user));
   },
 ));
 

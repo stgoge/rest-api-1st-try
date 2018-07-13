@@ -9,7 +9,7 @@ const getParameters = (req) => {
   if (!req.user.admin) params.userID = req.user.id;
   if (req.query.priority) params.priority = req.query.priority;
   if (req.query.status) params.status = req.query.status;
-  if (req.query.id) params[RECORD_ID_NAME] = req.query.id;
+  if (req.params.id) params[RECORD_ID_NAME] = req.params.id;
   return params;
 };
 
