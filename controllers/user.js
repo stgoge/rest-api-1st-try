@@ -2,22 +2,23 @@ const JWT = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
+const JWT_EXPIRATION_HOURS = 240;
+
 const NameExistsError = {
   CODE: 403,
   TEXT: 'Username is already exists',
 };
 
 const getUserWithHashedPass = (user) => {
-  const hashed = user;
   const salt = bcrypt.genSaltSync();
-  hashed.password = bcrypt.hashSync(user.password, salt);
-  return hashed;
+  user.password = bcrypt.hashSync(user.password, salt);
+  return user;
 };
 
 const signToken = user => JWT.sign({
   id: user.id,
   admin: user.admin,
-  exp: ((new Date().getTime() / 1000) + (process.env.JWT_EXPIRATION_HOURS * 60 * 60)),
+  exp: (Math.floor(new Date().getTime() / 1000) + (JWT_EXPIRATION_HOURS * 60 * 60)),
 }, process.env.JWT_SECRET);
 
 module.exports = {

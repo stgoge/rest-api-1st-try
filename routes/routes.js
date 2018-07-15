@@ -3,7 +3,8 @@ const passport = require('passport');
 const UsersController = require('../controllers/user');
 const RecordsController = require('../controllers/record');
 const { validateData, schemas } = require('./route-helpers');
-require('./passport');
+const { checkDbConnection } = require('../mongo/connect-mongo');
+require('../js/passport');
 
 const passportLocal = passport.authenticate('local', { session: false });
 const passportJWT = passport.authenticate('jwt', { session: false });
@@ -13,21 +14,21 @@ const validateRecordData = validateData(schemas.recordSchema);
 const router = express.Router();
 
 router.route('/signup')
-  .post(validateUserData, UsersController.signUp);
+  .post(checkDbConnection, validateUserData, UsersController.signUp);
 
 router.route('/signin')
-  .post(validateUserData, passportLocal, UsersController.signIn);
+  .post(checkDbConnection, validateUserData, passportLocal, UsersController.signIn);
 
 router.route('/records')
-  .post(validateRecordData, passportJWT, RecordsController.create);
+  .post(checkDbConnection, validateRecordData, passportJWT, RecordsController.create);
 
 router.route('/records')
-  .get(passportJWT, RecordsController.read);
+  .get(checkDbConnection, passportJWT, RecordsController.read);
 
-router.route('/records/:id')
-  .put(validateRecordData, passportJWT, RecordsController.update);
+router.route('/records')
+  .put(checkDbConnection, validateRecordData, passportJWT, RecordsController.update);
 
-router.route('/records/:id')
-  .delete(passportJWT, RecordsController.delete);
+router.route('/records')
+  .delete(checkDbConnection, passportJWT, RecordsController.delete);
 
 module.exports = router;

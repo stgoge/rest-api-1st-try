@@ -9,21 +9,22 @@ const getParameters = (req) => {
   if (!req.user.admin) params.userID = req.user.id;
   if (req.query.priority) params.priority = req.query.priority;
   if (req.query.status) params.status = req.query.status;
-  if (req.params.id) params[RECORD_ID_NAME] = req.params.id;
+  if (req.body.recordID) params[RECORD_ID_NAME] = req.body.recordID;
   return params;
 };
 
 module.exports = {
   create: (req, res) => {
     req.body.userID = req.user.id;
-    Record.create(req.body)
+    Record.create(req.body).maxTime(100)
       .then(() => res.send(SUCCESS_MESSAGE))
       .catch(err => res.send(err));
   },
 
   read: (req, res) => {
     Record.find(getParameters(req))
-      .then(records => res.send(records));
+      .then(records => res.send(records))
+      .catch(err => res.send(err));
   },
 
   update: (req, res) => {

@@ -19,9 +19,10 @@ module.exports = {
     }),
     recordSchema: Joi.object().keys({
       record: Joi.string().required(),
-      date: Joi.date().default(new Date().getTime()),
+      date: Joi.date().default(Date.now()),
       status: Joi.number(),
       priority: Joi.number(),
+      recordID: Joi.string(),
     }),
   },
 };
