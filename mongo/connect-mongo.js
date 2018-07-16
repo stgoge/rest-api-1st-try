@@ -9,7 +9,7 @@ const ConnectionMessage = {
 };
 const NO_CONNECTION_MESSAGE = 'no db connection, try again later';
 const NO_CONNECTION_ERROR = 503;
-const RECONNECT_INTERVAL = 10000;
+const RECONNECT_INTERVAL = 1000;
 const CONNECTION_STRING = `mongodb://${settings.PATH}`;
 const OPTIONS = {
   user: settings.USER,
@@ -46,6 +46,7 @@ const connectMongo = (tryCounter) => {
 };
 
 const checkDbConnection = (req, res, next) => {
+  console.log('checked!');
   if (mongoose.connection.readyState === 1) {
     next();
   } else {

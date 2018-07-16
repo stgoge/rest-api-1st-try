@@ -7,7 +7,7 @@ const JWT = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
-const JWT_FIELD = 'authorization';
+const JWT_FIELD = 'Authorization';
 const JWT_SECRET = 'somesecreeeet';
 const JWT_EXPIRATION_HOURS = 240;
 
@@ -23,13 +23,15 @@ passport.use(new JwtStrategy(
     secretOrKey: JWT_SECRET,
   },
   (payload, done) => {
+    console.log(payload);
     User.findById(payload.id)
       .then(user => done(null, user));
+    done();
   },
 ));
 
 passport.use(new LocalStrategy({}, (username, password, done) => {
-  User.findOne({ username }).maxTime(1)
+  User.findOne({ username })
     .then((user) => {
       done(null, (bcrypt.compareSync(password, user.password)) ? user : false);
     });
