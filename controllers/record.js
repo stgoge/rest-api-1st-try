@@ -16,7 +16,7 @@ const getParameters = (req) => {
 module.exports = {
   create: (req, res) => {
     req.body.userID = req.user.id;
-    Record.create(req.body).maxTime(100)
+    Record.create(req.body)
       .then(() => res.send(SUCCESS_MESSAGE))
       .catch(err => res.send(err));
   },
